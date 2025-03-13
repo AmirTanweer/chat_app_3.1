@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
-
+const User=require('../models/User.model')
 dotenv.config();
 
 const Authentication =async (req, res, next) => {
@@ -21,7 +21,8 @@ const Authentication =async (req, res, next) => {
     }
 
     // ✅ Attach user details to request for future use
-    req.user=validToken.userId
+    req.user = await User.findById(validToken.userId).select("-password");
+
     
     
      

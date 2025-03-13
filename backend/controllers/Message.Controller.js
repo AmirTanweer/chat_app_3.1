@@ -10,7 +10,8 @@ const fetchAllMessages=async(req,res)=>{
 
       const {chatId}=req.params
       console.log(chatId)
-      const messages=await Message.find({chat:chatId}).populate("sender","name email").populate("chat")
+    //   const messages=await Message.find({chat:chatId}).populate("sender","name email").populate("chat")
+      const messages=await Message.find({chat:chatId}).populate("sender","name email ").populate("chat")
       res.status(200).json(messages);
 
     } catch (error) {
@@ -26,7 +27,7 @@ const sendMessage=async(req,res)=>{
 
 
     try {
-    const myId=req.user
+    const myId=req.user._id
     const {chatId,content}=req.body
     if (!chatId || !content) {
         return res.status(400).json({ message: "Chat ID and message content are required" });
@@ -37,6 +38,7 @@ const sendMessage=async(req,res)=>{
         chat:chatId
  
       })
+     
       const fullMessage=await Message.findById(message._id).populate('sender','name email').populate('chat');
       console.log("message -> ",fullMessage)
       await Chat.findByIdAndUpdate(chatId,{latestMessage:fullMessage})

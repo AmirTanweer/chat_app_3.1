@@ -64,7 +64,7 @@ const loginUser=async(req,res)=>{
       }
 }
 const getUser=async(req,res)=>{
-    const myId=req.user
+    const myId=req.user._id
     let user=await User.findById(myId).select('-password')
     if(!user){
         res.status(404).json({error:"Unauthorized Access"});

@@ -8,7 +8,7 @@ const accessChat=async(req,res)=>{
           }
         try{
  const {userId}= req.body
- const myId=req.user
+ const myId=req.user._id
 
   if(!userId){
     return res.status(400).json({message:"User ID is required"});
@@ -46,8 +46,8 @@ const fetchChats=async(req,res)=>{
         return res.status(400).json({ errors: errors.array() });
       }
     try{
-  const myId=req.user
-
+  const myId=req.user._id
+ 
 const chats = await Chat.find({ users: myId })
 .populate("users", "-password")
 .populate("groupAdmin", "-password")
@@ -143,7 +143,7 @@ const addUserToGroup=async(req,res)=>{
     }
 
     try {
-         const myId=req.user
+         const myId=req.user._id
          const {userId,chatId}=req.body
          if(!userId || !chatId){
             return res.status(400).json({message:"Please provide valid userId and chatId"})
@@ -182,7 +182,7 @@ const removeUserFromGroup=async(req,res)=>{
 
 
     try {
-        const myId=req.user;
+        const myId=req.user._id;
        const {userId,chatId}=req.body
        if(!userId || !chatId){
             return res.status(400).json({message:"Please provide valid userId and chatId"})
