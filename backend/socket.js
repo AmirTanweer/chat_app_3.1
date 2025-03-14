@@ -45,14 +45,14 @@ io.on('connection',(socket)=>{
     console.log('Received chatId:',chatId);
  
     //   Save the message in the database
-      const newMessage = await Message.create({
-        sender: senderId,
-        content: msg,
-        chat: chatId,
-    });
+    //   const newMessage = await Message.create({
+    //     sender: senderId,
+    //     content: msg,
+    //     chat: chatId,
+    // });
 
     //Broadcast the message to the specific chat room
-    io.to(chatId).emit('newMessage',newMessage);    
+    io.to(chatId).emit('newMessage',msg);    
     // io.emit('newMessage',newMessage) 
     
    })
