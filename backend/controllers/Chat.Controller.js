@@ -94,6 +94,23 @@ const createGroupChat=async(req,res)=>{
         return res.status(500).json({ error: "Internal Server Error" });
       }
 }
+const fetchGroupChat=async(req,res)=>{
+    const errors=validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+    try{
+const chatId=req.params.chatId
+const groupChat=await Chat.findById(chatId).populate('users',"-password").populate('groupAdmin',"-password")
+res.status(200).json(groupChat);
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+}
+
+
 const renameGroup = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -217,4 +234,4 @@ const removeUserFromGroup=async(req,res)=>{
         return res.status(500).json({ error: "Internal Server Error" });
     }
 }
-module.exports={accessChat,fetchChats,createGroupChat,renameGroup,addUserToGroup,removeUserFromGroup}
+module.exports={accessChat,fetchChats,createGroupChat,renameGroup,addUserToGroup,removeUserFromGroup,fetchGroupChat}
