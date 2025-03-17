@@ -4,6 +4,7 @@ const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
 const User=require('../models/User.model')
 const dotenv=require('dotenv')
+const Chat = require('../models/Chat.model')
 dotenv.config();
 const registerUser= async(req,res)=>{
     const errors=validationResult(req)
@@ -72,4 +73,46 @@ const getUser=async(req,res)=>{
 
    res.status(200).json({user})
 }
-module.exports={registerUser,loginUser,getUser}
+const getUsersWithoutChats=async(req,res)=>{
+    const myId=req.user._id
+    console.log(myId)
+    const errors=validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+      try {
+        // get all chats id who is chat with myId
+        // const myChats = await Chat.find({isGroupChat: false, users: myId }).select('users').select('_id');
+        // const users=myChats.map((chat) => chat.users.filter((user) => user !== myId)[1],[0]);
+
+        const myChats = await Chat.find({ isGroupChat: false, users: myId })
+                         .select('users')
+                         .select('_id');
+
+                         const users = myChats.map((chat) =>
+                            chat.users.find((user) => user.toString() !== myId.toString())
+                        );
+       
+        
+        const allUsers = await User.find().select('_id');
+        const usersWithoutChatsIds = allUsers.filter(user => !myChats.some(chat => chat.users.includes(user._id)));
+
+        const usersWithoutChats = await User.find({ _id: { $in: usersWithoutChatsIds } });
+    
+ 
+       
+       
+
+        res.status(200).json({usersWithoutChats});
+    
+
+
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+    
+    
+}
+module.exports={registerUser,loginUser,getUser,getUsersWithoutChats}

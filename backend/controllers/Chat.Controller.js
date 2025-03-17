@@ -76,10 +76,17 @@ const createGroupChat=async(req,res)=>{
         if (users.length < 2) {
             return res.status(400).json({ message: "A group chat needs at least 2 members" });
         }
+        let groupChat = await Chat.findOne({
+            isGroupChat: true,
+            chatName: { $regex: chatName, $options: 'i' } 
+          });
+        if(groupChat){
+            return res.status(400).json({ message: "Group Chat already exists with this name" });
+        }
 
         users.push(myId);
 
-        let groupChat = await Chat.create({
+         groupChat = await Chat.create({
             chatName: chatName,
             isGroupChat: true,
             users: users,
